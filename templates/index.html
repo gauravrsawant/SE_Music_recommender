@@ -6,7 +6,20 @@
     <title>Emotion Detection Web App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
-        
+        /* Navigation bar styles */
+        nav {
+            background-color: #333;
+            padding: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+
         /* Main container styles */
         #container {
             display: flex;
@@ -41,7 +54,12 @@
     </style>
 </head>
 <body>
-    
+    <!-- Navigation bar -->
+    <nav>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="http://127.0.0.1:5009/">Hobby/Mood</a> <!-- Link to the hobby/mood page -->
+    </nav>   
 
     <!-- Main content -->
     <div id="container">

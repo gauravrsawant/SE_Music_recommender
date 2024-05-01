@@ -94,8 +94,13 @@ import requests
 import webbrowser
 import spotipy
 
-client_id = "your_client_id"
-client_secret = "your_client_secret"
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Load environment variables from .env file
+
+client_id = os.getenv("client_id")
+client_secret = os.getenv("client_secret")
 
 SPOTIFY_TOKEN = "https://accounts.spotify.com/api/token"
 request_body = {

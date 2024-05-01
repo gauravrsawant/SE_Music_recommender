@@ -1,1 +1,3 @@
 songs/
+.env
+music_data.csv
