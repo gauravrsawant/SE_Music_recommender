@@ -61,3 +61,31 @@ def recommend_songs_route():
     selected_hobby = request.form['hobby']
     recommended = recommend_songs(selected_hobby)
     return render_template('hobby_recommendations.html', songs=recommended, hobby=selected_hobby)
+
+# Function to recommend songs based on emotion
+def recommend_songs_emotion(emotion):
+    # Filter songs based on the selected emotion
+    emotion_songs = song_data[song_data['emotion'] == emotion]
+    # Randomly select up to 9 songs from the filtered list
+    selected_songs = emotion_songs.sample(min(9, len(emotion_songs)))
+    # Return a list of dictionaries containing song information
+    return selected_songs[['artist_name', 'track_name', 'year']].to_dict(orient='records')
+
+@app.route('/')
+def index():
+    return render_template('fe2_index.html')
+
+@app.route('/play_selected_song', methods=['POST'])
+def play_selected_song():
+    selected_song = request.json['selected_song']
+    play_song(selected_song)
+    return jsonify({'status': 'success'})
+
+@app.route('/recommend-songs-emotion', methods=['POST'])
+def recommend_songs_emotion_route():
+    selected_emotion = request.form['emotion']
+    recommended_emotion = recommend_songs_emotion(selected_emotion)
+    return render_template('emotion_recommendation.html', songs=recommended_emotion, emotion=selected_emotion)
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5009)
