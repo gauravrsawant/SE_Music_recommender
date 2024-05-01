@@ -94,8 +94,8 @@ import requests
 import webbrowser
 import spotipy
 
-client_id = 'f17085dc406f4736811fb37b3990077c'
-client_secret = '15b9da1fa07e4fc19d7289ceac8e1b39'
+client_id = "your_client_id"
+client_secret = "your_client_secret"
 
 SPOTIFY_TOKEN = "https://accounts.spotify.com/api/token"
 request_body = {
