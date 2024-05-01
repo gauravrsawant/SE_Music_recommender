@@ -46,3 +46,18 @@ def play_song(track_name):
             webbrowser.open(track_uri)
     else:
         print("Failed to get Spotify access token.")
+
+# Function to recommend songs based on hobby
+def recommend_songs(hobby):
+    # Filter songs based on the selected hobby
+    hobby_songs = song_data[song_data['hobbies'] == hobby]
+    # Randomly select up to 9 songs from the filtered list
+    selected_songs = hobby_songs.sample(min(9, len(hobby_songs)))
+    # Return a list of dictionaries containing song information
+    return selected_songs[['artist_name', 'track_name', 'year']].to_dict(orient='records')
+
+@app.route('/recommend-songs', methods=['POST'])
+def recommend_songs_route():
+    selected_hobby = request.form['hobby']
+    recommended = recommend_songs(selected_hobby)
+    return render_template('hobby_recommendations.html', songs=recommended, hobby=selected_hobby)
