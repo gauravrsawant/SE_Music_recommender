@@ -45,3 +45,100 @@ def detect_emotion(img_data):
         emotions.append(emotion)
 
     return emotions
+
+# Function to get random songs based on detected emotion
+def get_random_songs(emotion):
+    try:
+        with open(f'songs/{emotion}.csv', 'r', newline='', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            songs = list(reader)
+        random.shuffle(songs)  # Shuffle the list of songs
+        return songs[:5]  # Return first 5 random songs
+    except FileNotFoundError:
+        return []
+
+
+# Define route for the main page
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# Define route for emotion detection
+@app.route('/detect_emotion', methods=['POST'])
+def detect_emotion_route():
+    # Receive image data from frontend
+    img_data = request.json['image_data']
+    
+    # Detect emotion in the image
+    emotions = detect_emotion(img_data)
+
+    if emotions:
+        # Get most frequent emotion
+        emotion = max(set(emotions), key=emotions.count)
+        # Get songs based on detected emotion
+        songs = get_random_songs(emotion)
+        if songs:
+            # Generate HTML table for songs
+            songs_html = '<table>'
+            songs_html += '<tr><th>Title</th><th>Album</th><th>Artist</th></tr>'
+            for song in songs:
+                songs_html += f'<tr><td>{song[0]}</td><td>{song[1]}</td><td>{song[2]}</td></tr>'
+            songs_html += '</table>'
+            # Return data as JSON
+            return jsonify(emotion=emotion, songsHtml=songs_html)
+        else:
+            return jsonify(emotion='No songs found', songsHtml='')
+    else:
+        return jsonify(emotion='No face detected', songsHtml='')
+import requests
+import webbrowser
+import spotipy
+
+client_id = 'f17085dc406f4736811fb37b3990077c'
+client_secret = '15b9da1fa07e4fc19d7289ceac8e1b39'
+
+SPOTIFY_TOKEN = "https://accounts.spotify.com/api/token"
+request_body = {
+    "grant_type": "client_credentials",
+    "code": "code",
+    "redirect_uri": 'http://localhost:8888/callback',
+    "client_id": client_id,
+    "client_secret": client_secret,
+}
+r = requests.post(url=SPOTIFY_TOKEN, data=request_body)
+resp = r.json()['access_token']
+client_credentials_manager = SpotifyClientCredentials(client_id=client_id, client_secret=client_secret)
+spotify = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+client = spotipy.Spotify(auth=resp)
+
+def play_song(track_name):
+    results = spotify.search(q='track:%s' % track_name, type='track')
+    if results['tracks']['total'] == 0:
+        print("Song not found. Please try again.")
+    else:
+        track = results['tracks']['items'][0]
+        track_uri = track['uri']
+        webbrowser.open(track_uri)
+        
+def play_song(track_name):
+    results = spotify.search(q='track:%s' % track_name, type='track')
+    if results['tracks']['total'] == 0:
+        print("Song not found. Please try again.")
+    else:
+        track = results['tracks']['items'][0]
+        track_uri = track['uri']
+        # Open the track URI in the default web browser
+        webbrowser.open(track_uri)
+        # Wait for a brief moment to ensure the web browser is opened
+        time.sleep(1)
+        # Use Spotipy to play the track (if Spotipy is properly set up)
+        client.start_playback(uris=[track_uri])
+        
+# Define route to play the selected song
+@app.route('/play_selected_song', methods=['POST'])
+def play_selected_song():
+    selected_song = request.json['selected_song']
+    play_song(selected_song)
+
+if __name__ == '__main__':
+    app.run(debug=True)
