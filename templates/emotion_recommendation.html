@@ -94,7 +94,22 @@
         {% endfor %}
     </div>
 
-    
+    <script>
+        function selectSong(trackName, artistName) {
+            var selectedSong = trackName + " - " + artistName;
+            document.getElementById("selected-song").innerText = "Selected Song: " + selectedSong;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/play_selected_song", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log("Song selection sent to server.");
+                }
+            };
+            xhr.send(JSON.stringify({ selected_song: selectedSong }));
+        }
+    </script>
 
     <div id="selected-song"></div>
 </body>
