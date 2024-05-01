@@ -120,19 +120,19 @@ def play_song(track_name):
         track_uri = track['uri']
         webbrowser.open(track_uri)
         
-def play_song(track_name):
-    results = spotify.search(q='track:%s' % track_name, type='track')
-    if results['tracks']['total'] == 0:
-        print("Song not found. Please try again.")
-    else:
-        track = results['tracks']['items'][0]
-        track_uri = track['uri']
-        # Open the track URI in the default web browser
-        webbrowser.open(track_uri)
-        # Wait for a brief moment to ensure the web browser is opened
-        time.sleep(1)
-        # Use Spotipy to play the track (if Spotipy is properly set up)
-        client.start_playback(uris=[track_uri])
+# def play_song(track_name):
+#     results = spotify.search(q='track:%s' % track_name, type='track')
+#     if results['tracks']['total'] == 0:
+#         print("Song not found. Please try again.")
+#     else:
+#         track = results['tracks']['items'][0]
+#         track_uri = track['uri']
+#         # Open the track URI in the default web browser
+#         webbrowser.open(track_uri)
+#         # Wait for a brief moment to ensure the web browser is opened
+#         time.sleep(1)
+#         # Use Spotipy to play the track (if Spotipy is properly set up)
+#         client.start_playback(uris=[track_uri])
         
 # Define route to play the selected song
 @app.route('/play_selected_song', methods=['POST'])
