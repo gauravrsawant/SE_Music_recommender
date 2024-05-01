@@ -94,7 +94,16 @@
         <button type="submit">Recommend Songs</button>
     </form>
     <br>
-
+    <form action="/recommend-songs-emotion" method="post" id="emotionForm" onsubmit="return validateForm('emotion')">
+        <select name="emotion" id="emotion" required>
+            <option value="" disabled selected>Select an emotion</option>
+            <option value="happy">Happy</option>
+            <option value="sad">Sad</option>
+            <option value="calm">Calm</option>
+            <option value="angry">Angry</option>
+        </select>
+        <button type="submit">Recommend Songs</button>
+    </form>
     <script>
         function validateForm(type) {
             var form = document.getElementById(type + 'Form');
