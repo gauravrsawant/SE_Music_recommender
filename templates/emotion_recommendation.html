@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Songs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        nav {
+            background-color: #333;
+            padding: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        body {
+            background-image: url("{{ url_for('static', filename='new.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        h1 {
+            color: white;
+            background-color: black;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+        }
+        .container {
+            width: 80%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        .song-card {
+            width: 30%;
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer; /* Add cursor pointer */
+            transition: transform 0.2s ease-in-out; /* Add smooth transition */
+        }
+        .song-card:hover {
+            transform: scale(1.05); /* Add hover effect */
+        }
+        .song-card h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #333;
+            text-align: center;
+        }
+        .song-details {
+            color: #666;
+            font-size: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="http://127.0.0.1:5000/">Detect Emotion</a>
+    </nav>
+    <h1>Recommended Songs for {{ emotion }} Emotion</h1>
+
+    <div class="container">
+        {% for song in songs %}
+        <div class="song-card" onclick="selectSong('{{ song.track_name }}', '{{ song.artist_name }}')">
+            <h2>{{ song.track_name }}</h2>
+            <div class="song-details">
+                <p>Artist: {{ song.artist_name }}</p>
+                <p>Release Year: {{ song.year }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    
+
+    <div id="selected-song"></div>
+</body>
+</html>
