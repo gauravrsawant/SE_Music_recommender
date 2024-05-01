@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Recommendation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        nav {
+            background-color: #333;
+            padding: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        body {
+            background-image: url("{{ url_for('static', filename='new.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        h1 {
+    color: white;
+    background-color: black;
+    padding: 20px 70px; /* Increase padding horizontally */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+    font-size: 32px;
+}
+        form {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        select, button {
+            font-size: 16px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .recommendation {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .recommendation-item {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: calc(25% - 20px);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="http://127.0.0.1:5000/">Detect Emotion</a>
+    </nav>
+    <h1>Music Recommendation</h1>
+    <form action="/recommend-songs" method="post" id="hobbyForm" onsubmit="return validateForm('hobby')">
+        <select name="hobby" id="hobby" required>
+            <option value="" disabled selected>Select a hobby</option>
+            <option value="workout">Workout</option>
+            <option value="trekking">Trekking</option>
+            <option value="art">Art</option>
+            <option value="other">Other</option>
+        </select>
+        <button type="submit">Recommend Songs</button>
+    </form>
+    <br>
+
+    <script>
+        function validateForm(type) {
+            var form = document.getElementById(type + 'Form');
+            var selectElement = form.querySelector('select');
+            if (selectElement.value === '') {
+                alert('Please select a ' + type + '.');
+                return false; // Prevent form submission
+            }
+            return true; // Allow form submission
+        }
+    </script>
+</body>
+</html>
