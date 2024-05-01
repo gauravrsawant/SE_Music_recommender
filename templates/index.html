@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Detection Web App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        
+        /* Main container styles */
+        #container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+        }
+
+        /* Video and result container styles */
+        #video-container {
+            margin-right: 20px;
+        }
+
+        #result {
+            max-width: 400px;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    
+
+    <!-- Main content -->
+    <div id="container">
+        <div id="video-container">
+            <video id="video" width="640" height="480" autoplay></video>
+            <button id="captureButton">Capture</button>
+        </div>
+        <div id="result"></div>
+        <div id="selectedSong"></div>
+        <button id="playButton">Play Selected Song</button>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const captureButton = document.getElementById('captureButton');
+        const resultDiv = document.getElementById('result');
+        let selectedSong = ''; // Variable to store the concatenated song title and album
+
+        // Access webcam
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                video.srcObject = stream;
+            })
+            .catch(function(err) {
+                console.error('Error accessing webcam:', err);
+            });
+
+        // Function to capture image from webcam
+        function captureImage() {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imgData = canvas.toDataURL('image/png');
+            sendToBackend(imgData);
+        }
+
+        // Function to send captured image to backend for emotion detection
+        function sendToBackend(imgData) {
+            fetch('/detect_emotion', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image_data: imgData })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                const emotion = data.emotion;
+                const songsHtml = data.songsHtml;
+                resultDiv.innerHTML = `<h3>Emotion detected: ${emotion}</h3>`;
+                resultDiv.innerHTML += songsHtml;
+
+                // Add click event listener to each song
+                const songRows = document.querySelectorAll('#result table tr');
+                songRows.forEach(function(row, index) {
+                    if (index > 0) {
+                        row.addEventListener('click', function() {
+                            const title = row.cells[1].textContent;
+                            const album = row.cells[2].textContent;
+                            selectedSong = `${title} - ${album}`;
+                            displaySelectedSong();
+                        });
+                    }
+                });
+            })
+            .catch(function(err) {
+                console.error('Error detecting emotion:', err);
+            });
+        }
+
+        function displaySelectedSong() {
+            const selectedSongDiv = document.getElementById('selectedSong');
+            selectedSongDiv.textContent = `Selected song: ${selectedSong}`;
+        }
+
+        function playSelectedSong() {
+            fetch('/play_selected_song', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ selected_song: selectedSong })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                console.log(data.message);
+            })
+            .catch(function(err) {
+                console.error('Error playing the selected song:', err);
+            });
+        }
+
+        captureButton.addEventListener('click', captureImage);
+
+        const playButton = document.getElementById('playButton');
+        playButton.addEventListener('click', playSelectedSong);
+    </script>
+</body>
+</html>
